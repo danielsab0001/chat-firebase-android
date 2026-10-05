@@ -11,5 +11,7 @@
     <string name="btn_go_register">¿No tienes cuenta? Regístrate</string>
     <string name="btn_go_login">Ya tengo cuenta</string>
     <string name="btn_logout">Cerrar sesión</string>
-    <string name="welcome_user">Hola, %1$s</string>
+    <string name="users_title">Usuarios</string>
+    <string name="empty_users">Aún no hay otros usuarios registrados</string>
+    <string name="chat_placeholder">Aquí irá el chat con %1$s</string>
 </resources>

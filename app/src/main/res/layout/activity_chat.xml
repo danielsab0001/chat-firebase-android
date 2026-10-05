@@ -13,27 +13,16 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:title="@string/users_title" />
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rvUsers"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/toolbar" />
+        app:navigationIcon="?attr/homeAsUpIndicator" />
 
     <TextView
-        android:id="@+id/tvEmpty"
+        android:id="@+id/tvPlaceholder"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:gravity="center"
         android:padding="24dp"
-        android:text="@string/empty_users"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="@id/rvUsers"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/rvUsers" />
+        app:layout_constraintTop_toBottomOf="@id/toolbar" />
 </androidx.constraintlayout.widget.ConstraintLayout>

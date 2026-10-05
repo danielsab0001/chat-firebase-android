@@ -6,7 +6,6 @@ public class User {
     private String name;
     private String email;
 
-    // Firestore necesita un constructor vacío para convertir documentos en objetos
     public User() {
     }
 
