@@ -1,0 +1,19 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    match /users/{userId} {
+      allow read: if request.auth != null;
+      allow create: if request.auth != null
+                    && request.auth.uid == userId
+                    && request.resource.data.keys().hasAll(['uid', 'name', 'email'])
+                    && request.resource.data.keys().hasOnly(['uid', 'name', 'email'])
+                    && request.resource.data.uid == userId
+                    && request.resource.data.name is string
+                    && request.resource.data.name.size() >= 2
+                    && request.resource.data.name.size() <= 50
+                    && request.resource.data.email is string;
+      allow update, delete: if false;
+    }
+  }
+}
