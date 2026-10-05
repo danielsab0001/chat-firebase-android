@@ -1,3 +1,15 @@
 <resources>
     <string name="app_name">ChatFirebase</string>
+    <string name="register_title">Crear cuenta</string>
+    <string name="login_title">Iniciar sesión</string>
+    <string name="hint_name">Nombre</string>
+    <string name="hint_email">Correo electrónico</string>
+    <string name="hint_password">Contraseña</string>
+    <string name="hint_confirm_password">Confirmar contraseña</string>
+    <string name="btn_login">Entrar</string>
+    <string name="btn_register">Registrarme</string>
+    <string name="btn_go_register">¿No tienes cuenta? Regístrate</string>
+    <string name="btn_go_login">Ya tengo cuenta</string>
+    <string name="btn_logout">Cerrar sesión</string>
+    <string name="welcome_user">Hola, %1$s</string>
 </resources>
