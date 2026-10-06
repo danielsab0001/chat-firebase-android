@@ -15,10 +15,12 @@ public class AuthViewModel extends ViewModel {
     private final MutableLiveData<Boolean> loading = new MutableLiveData<>(false);
     private final MutableLiveData<String> error = new MutableLiveData<>();
     private final MutableLiveData<Boolean> authSuccess = new MutableLiveData<>(false);
+    private final MutableLiveData<Boolean> loggedOut = new MutableLiveData<>(false);
 
     public LiveData<Boolean> getLoading() { return loading; }
     public LiveData<String> getError() { return error; }
     public LiveData<Boolean> getAuthSuccess() { return authSuccess; }
+    public LiveData<Boolean> getLoggedOut() { return loggedOut; }
 
     public boolean isLoggedIn() {
         return repository.isLoggedIn();
@@ -65,7 +67,7 @@ public class AuthViewModel extends ViewModel {
     }
 
     public void logout() {
-        repository.logout();
+        repository.logout(() -> loggedOut.setValue(true));
     }
 
     private Callback<Void> resultCallback() {

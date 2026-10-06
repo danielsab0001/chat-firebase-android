@@ -14,11 +14,16 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import com.google.firebase.messaging.FirebaseMessaging;
+
+import java.util.HashMap;
+import java.util.Map;
+
 public class UserRepository {
 
     private static final String TAG = "UserRepository";
     private static final String USERS_COLLECTION = "users";
-
+    private static final String TOKENS_COLLECTION = "fcmTokens";
     private final FirebaseAuth auth = FirebaseAuth.getInstance();
     private final FirebaseFirestore db = FirebaseFirestore.getInstance();
     private ListenerRegistration registration;
@@ -50,6 +55,33 @@ public class UserRepository {
                     Collections.sort(users, (a, b) -> a.getName().compareToIgnoreCase(b.getName()));
                     callback.onSuccess(users);
                 });
+    }
+
+    public void saveCurrentFcmToken() {
+        FirebaseMessaging.getInstance().getToken()
+                .addOnSuccessListener(this::saveFcmToken)
+                .addOnFailureListener(e -> Log.e(TAG, "No se pudo obtener el token FCM", e));
+    }
+
+    public void saveFcmToken(String token) {
+        FirebaseUser user = auth.getCurrentUser();
+        if (user == null) {
+            return;
+        }
+        Map<String, Object> data = new HashMap<>();
+        data.put("token", token);
+        db.collection(TOKENS_COLLECTION).document(user.getUid()).set(data)
+                .addOnFailureListener(e -> Log.e(TAG, "No se pudo guardar el token FCM", e));
+    }
+
+    public void deleteFcmToken(Runnable onDone) {
+        FirebaseUser user = auth.getCurrentUser();
+        if (user == null) {
+            onDone.run();
+            return;
+        }
+        db.collection(TOKENS_COLLECTION).document(user.getUid()).delete()
+                .addOnCompleteListener(task -> onDone.run());
     }
 
     public void stopListening() {

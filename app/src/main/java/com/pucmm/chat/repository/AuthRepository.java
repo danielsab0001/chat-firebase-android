@@ -19,9 +19,9 @@ public class AuthRepository {
 
     private static final String TAG = "AuthRepository";
     private static final String USERS_COLLECTION = "users";
-
     private final FirebaseAuth auth = FirebaseAuth.getInstance();
     private final FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private final UserRepository userRepository = new UserRepository();
 
     public boolean isLoggedIn() {
         return auth.getCurrentUser() != null;
@@ -56,8 +56,11 @@ public class AuthRepository {
                 .addOnFailureListener(e -> callback.onError(translateError(e)));
     }
 
-    public void logout() {
-        auth.signOut();
+    public void logout(Runnable onDone) {
+        userRepository.deleteFcmToken(() -> {
+            auth.signOut();
+            onDone.run();
+        });
     }
 
     // Guarda el perfil en Firestore

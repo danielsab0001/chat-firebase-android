@@ -38,7 +38,9 @@ public class UsersViewModel extends ViewModel {
             }
         });
     }
-
+    public void saveFcmToken() {
+        repository.saveCurrentFcmToken();
+    }
     @Override
     protected void onCleared() {
         super.onCleared();

@@ -27,6 +27,8 @@ public class ChatActivity extends AppCompatActivity {
     private ActivityChatBinding binding;
     private ChatViewModel viewModel;
     private MessageAdapter adapter;
+    public static String currentChatUserId = null;
+    private String otherUserId;
 
     private final ActivityResultLauncher<PickVisualMediaRequest> imagePicker =
             registerForActivityResult(new ActivityResultContracts.PickVisualMedia(), uri -> {
@@ -36,6 +38,18 @@ public class ChatActivity extends AppCompatActivity {
             });
 
     @Override
+    protected void onStart() {
+        super.onStart();
+        currentChatUserId = otherUserId;
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        currentChatUserId = null;
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         EdgeToEdge.enable(this);
         super.onCreate(savedInstanceState);
@@ -43,7 +57,7 @@ public class ChatActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
         setupInsets();
 
-        String otherUserId = getIntent().getStringExtra(EXTRA_USER_ID);
+        otherUserId = getIntent().getStringExtra(EXTRA_USER_ID);
         String otherUserName = getIntent().getStringExtra(EXTRA_USER_NAME);
         viewModel = new ViewModelProvider(this).get(ChatViewModel.class);
 
