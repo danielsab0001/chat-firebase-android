@@ -45,4 +45,41 @@
         <item name="android:textSize">@dimen/text_caption</item>
         <item name="android:textColor">@color/on_surface_variant</item>
     </style>
+
+    <!-- Barra superior: superficie del tema, título en negrita -->
+    <style name="Widget.Chat.Toolbar" parent="Widget.Material3.Toolbar">
+        <item name="android:background">@color/surface</item>
+        <item name="titleTextColor">@color/on_surface</item>
+        <item name="titleTextAppearance">@style/TextAppearance.Chat.ToolbarTitle</item>
+    </style>
+
+    <style name="TextAppearance.Chat.ToolbarTitle" parent="TextAppearance.Material3.TitleLarge">
+        <item name="android:textSize">@dimen/text_toolbar</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <!-- Campo de texto redondeado: caja de mensaje y buscador -->
+    <style name="Widget.Chat.RoundedInput" parent="Widget.AppCompat.EditText">
+        <item name="android:background">@drawable/bg_input_message</item>
+        <item name="android:minHeight">@dimen/input_min_height</item>
+        <item name="android:paddingStart">@dimen/space_m</item>
+        <item name="android:paddingEnd">@dimen/space_m</item>
+        <item name="android:paddingTop">@dimen/space_s</item>
+        <item name="android:paddingBottom">@dimen/space_s</item>
+        <item name="android:textColor">@color/on_surface</item>
+        <item name="android:textColorHint">@color/on_surface_variant</item>
+        <item name="android:textSize">@dimen/text_body</item>
+    </style>
+
+    <!-- Esquinas redondeadas para las fotos del chat -->
+    <style name="ShapeAppearance.Chat.Image" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">@dimen/radius_m</item>
+    </style>
+
+    <string name="login_subtitle">Inicia sesión para continuar</string>
+    <string name="register_subtitle">Crea tu cuenta para empezar a chatear</string>
+    <string name="hint_search">Buscar usuario</string>
+    <string name="no_results">No se encontraron usuarios</string>
+
 </resources>
