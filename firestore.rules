@@ -42,5 +42,16 @@ service cloud.firestore {
                     && request.resource.data.timestamp == request.time;
       allow update, delete: if false;
     }
+
+    match /fcmTokens/{userId} {
+       allow read: if false;
+       allow create, update: if request.auth != null
+                             && request.auth.uid == userId
+                             && request.resource.data.keys().hasOnly(['token'])
+                             && request.resource.data.token is string
+                             && request.resource.data.token.size() > 0
+                             && request.resource.data.token.size() <= 4096;
+       allow delete: if request.auth != null && request.auth.uid == userId;
+    }
   }
 }
