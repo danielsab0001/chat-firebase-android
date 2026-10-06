@@ -1,11 +1,15 @@
 package com.pucmm.chat.adapter;
 
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.pucmm.chat.databinding.ItemMessageReceivedBinding;
 import com.pucmm.chat.databinding.ItemMessageSentBinding;
 import com.pucmm.chat.model.Message;
@@ -55,18 +59,38 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         Message message = messages.get(position);
-        String time = formatTime(message.getTimestamp());
 
         if (holder instanceof SentViewHolder) {
             ItemMessageSentBinding b = ((SentViewHolder) holder).binding;
-            b.tvSender.setText(message.getSenderName());
-            b.tvMessage.setText(message.getText());
-            b.tvTime.setText(time);
+            bindMessage(message, b.tvSender, b.tvMessage, b.ivImage, b.tvTime);
         } else {
             ItemMessageReceivedBinding b = ((ReceivedViewHolder) holder).binding;
-            b.tvSender.setText(message.getSenderName());
-            b.tvMessage.setText(message.getText());
-            b.tvTime.setText(time);
+            bindMessage(message, b.tvSender, b.tvMessage, b.ivImage, b.tvTime);
+        }
+    }
+
+    private void bindMessage(Message message, TextView tvSender, TextView tvMessage,
+                             ImageView ivImage, TextView tvTime) {
+        tvSender.setText(message.getSenderName());
+        tvTime.setText(formatTime(message.getTimestamp()));
+
+        boolean hasText = message.getText() != null && !message.getText().isEmpty();
+        tvMessage.setText(message.getText());
+        tvMessage.setVisibility(hasText ? View.VISIBLE : View.GONE);
+
+        boolean hasImage = message.getImageUrl() != null && !message.getImageUrl().isEmpty();
+        if (hasImage) {
+            ivImage.setVisibility(View.VISIBLE);
+            Glide.with(ivImage)
+                    .load(message.getImageUrl())
+                    .placeholder(android.R.drawable.ic_menu_gallery)
+                    .error(android.R.drawable.ic_menu_report_image)
+                    .centerCrop()
+                    .into(ivImage);
+        } else {
+            // Las filas se reciclan: hay que cancelar la carga anterior y ocultar la imagen
+            Glide.with(ivImage).clear(ivImage);
+            ivImage.setVisibility(View.GONE);
         }
     }
 

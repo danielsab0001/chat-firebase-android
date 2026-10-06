@@ -16,4 +16,5 @@
     <string name="hint_message">Escribe un mensaje</string>
     <string name="btn_send">Enviar</string>
     <string name="empty_chat">Aún no hay mensajes. ¡Escribe el primero!</string>
+    <string name="btn_attach">Foto</string>
 </resources>

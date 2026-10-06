@@ -5,6 +5,9 @@ import android.view.View;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.PickVisualMediaRequest;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -25,6 +28,13 @@ public class ChatActivity extends AppCompatActivity {
     private ChatViewModel viewModel;
     private MessageAdapter adapter;
 
+    private final ActivityResultLauncher<PickVisualMediaRequest> imagePicker =
+            registerForActivityResult(new ActivityResultContracts.PickVisualMedia(), uri -> {
+                if (uri != null) {
+                    viewModel.sendImage(uri);
+                }
+            });
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         EdgeToEdge.enable(this);
@@ -36,7 +46,7 @@ public class ChatActivity extends AppCompatActivity {
         String otherUserId = getIntent().getStringExtra(EXTRA_USER_ID);
         String otherUserName = getIntent().getStringExtra(EXTRA_USER_NAME);
         viewModel = new ViewModelProvider(this).get(ChatViewModel.class);
-        
+
         if (otherUserId == null || otherUserName == null
                 || viewModel.getCurrentUserId() == null) {
             finish();
@@ -52,6 +62,7 @@ public class ChatActivity extends AppCompatActivity {
         observeViewModel();
 
         binding.btnSend.setOnClickListener(v -> sendMessage());
+        binding.btnAttach.setOnClickListener(v -> openImagePicker());
     }
 
     private void setupInsets() {
@@ -66,7 +77,7 @@ public class ChatActivity extends AppCompatActivity {
     private void setupRecyclerView() {
         adapter = new MessageAdapter(viewModel.getCurrentUserId());
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-        layoutManager.setStackFromEnd(true); // los mensajes se acumulan desde abajo
+        layoutManager.setStackFromEnd(true);
         binding.rvMessages.setLayoutManager(layoutManager);
         binding.rvMessages.setAdapter(adapter);
     }
@@ -85,6 +96,11 @@ public class ChatActivity extends AppCompatActivity {
                 Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
             }
         });
+
+        viewModel.getUploadingImage().observe(this, uploading -> {
+            binding.progressUpload.setVisibility(uploading ? View.VISIBLE : View.GONE);
+            binding.btnAttach.setEnabled(!uploading);
+        });
     }
 
     private void sendMessage() {
@@ -92,5 +108,11 @@ public class ChatActivity extends AppCompatActivity {
         if (viewModel.sendMessage(text)) {
             binding.etMessage.setText("");
         }
+    }
+
+    private void openImagePicker() {
+        imagePicker.launch(new PickVisualMediaRequest.Builder()
+                .setMediaType(ActivityResultContracts.PickVisualMedia.ImageOnly.INSTANCE)
+                .build());
     }
 }
