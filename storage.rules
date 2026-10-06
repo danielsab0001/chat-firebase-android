@@ -1,0 +1,19 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+
+    match /chat_images/{chatId}/{fileName} {
+      allow read: if request.auth != null
+                  && chatId.split('_').size() == 2
+                  && request.auth.uid in chatId.split('_');
+
+      allow create: if request.auth != null
+                    && chatId.split('_').size() == 2
+                    && request.auth.uid in chatId.split('_')
+                    && request.resource.size < 5 * 1024 * 1024
+                    && request.resource.contentType.matches('image/.*');
+
+      allow update, delete: if false;
+    }
+  }
+}

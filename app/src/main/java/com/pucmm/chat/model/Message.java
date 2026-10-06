@@ -9,15 +9,21 @@ public class Message {
     private String senderId;
     private String senderName;
     private String text;
+    private String imageUrl;
     private Date timestamp;
 
     public Message() {
     }
 
     public Message(String senderId, String senderName, String text) {
+        this(senderId, senderName, text, null);
+    }
+
+    public Message(String senderId, String senderName, String text, String imageUrl) {
         this.senderId = senderId;
         this.senderName = senderName;
         this.text = text;
+        this.imageUrl = imageUrl;
     }
 
     public String getSenderId() { return senderId; }
@@ -28,6 +34,9 @@ public class Message {
 
     public String getText() { return text; }
     public void setText(String text) { this.text = text; }
+
+    public String getImageUrl() { return imageUrl; }
+    public void setImageUrl(String imageUrl) { this.imageUrl = imageUrl; }
 
     @ServerTimestamp
     public Date getTimestamp() { return timestamp; }

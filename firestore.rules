@@ -26,14 +26,19 @@ service cloud.firestore {
       allow read: if isParticipant(chatId);
       allow create: if isParticipant(chatId)
                     && request.resource.data.keys().hasAll(['senderId', 'senderName', 'text', 'timestamp'])
-                    && request.resource.data.keys().hasOnly(['senderId', 'senderName', 'text', 'timestamp'])
+                    && request.resource.data.keys().hasOnly(['senderId', 'senderName', 'text', 'imageUrl', 'timestamp'])
                     && request.resource.data.senderId == request.auth.uid
                     && request.resource.data.senderName is string
                     && request.resource.data.senderName.size() > 0
                     && request.resource.data.senderName.size() <= 50
                     && request.resource.data.text is string
-                    && request.resource.data.text.size() > 0
                     && request.resource.data.text.size() <= 2000
+                    && (request.resource.data.get('imageUrl', null) == null
+                        || (request.resource.data.imageUrl is string
+                            && request.resource.data.imageUrl.size() <= 2048
+                            && request.resource.data.imageUrl.matches('https://firebasestorage\\.googleapis\\.com/.*')))
+                    && (request.resource.data.text.size() > 0
+                        || request.resource.data.get('imageUrl', null) != null)
                     && request.resource.data.timestamp == request.time;
       allow update, delete: if false;
     }

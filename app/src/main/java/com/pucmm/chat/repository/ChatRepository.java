@@ -9,20 +9,26 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.Query;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageMetadata;
+import com.google.firebase.storage.StorageReference;
 import com.pucmm.chat.model.Message;
 import com.pucmm.chat.util.Callback;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class ChatRepository {
 
     private static final String TAG = "ChatRepository";
     private static final String CHATS_COLLECTION = "chats";
     private static final String MESSAGES_COLLECTION = "messages";
+    private static final String IMAGES_FOLDER = "chat_images";
 
     private final FirebaseAuth auth = FirebaseAuth.getInstance();
     private final FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private final FirebaseStorage storage = FirebaseStorage.getInstance();
     private ListenerRegistration registration;
 
     public String getCurrentUserId() {
@@ -54,7 +60,7 @@ public class ChatRepository {
 
                     List<Message> messages = new ArrayList<>();
                     for (DocumentSnapshot doc : snapshots.getDocuments()) {
-
+                        // ESTIMATE: mientras el servidor no confirma la hora, usa una estimada
                         Message message = doc.toObject(Message.class,
                                 DocumentSnapshot.ServerTimestampBehavior.ESTIMATE);
                         if (message != null) {
@@ -72,18 +78,57 @@ public class ChatRepository {
             return;
         }
 
-        String senderName = user.getDisplayName();
-        if (senderName == null || senderName.isEmpty()) {
-            senderName = "Usuario";
+        Message message = new Message(user.getUid(), getSenderName(user), text);
+        addMessage(chatId, message, "No se pudo enviar el mensaje", callback);
+    }
+
+    public void sendImage(String chatId, byte[] imageData, Callback<Void> callback) {
+        FirebaseUser user = auth.getCurrentUser();
+        if (user == null) {
+            callback.onError("No hay una sesión activa");
+            return;
         }
 
-        Message message = new Message(user.getUid(), senderName, text);
+        StorageReference imageRef = storage.getReference()
+                .child(IMAGES_FOLDER)
+                .child(chatId)
+                .child(UUID.randomUUID() + ".jpg");
+        StorageMetadata metadata = new StorageMetadata.Builder()
+                .setContentType("image/jpeg")
+                .build();
+
+        imageRef.putBytes(imageData, metadata)
+                .addOnSuccessListener(snapshot ->
+                        imageRef.getDownloadUrl()
+                                .addOnSuccessListener(uri -> {
+                                    Message message = new Message(
+                                            user.getUid(), getSenderName(user), "", uri.toString());
+                                    addMessage(chatId, message,
+                                            "No se pudo enviar la imagen", callback);
+                                })
+                                .addOnFailureListener(e -> {
+                                    Log.e(TAG, "Error al obtener la URL de la imagen", e);
+                                    callback.onError("No se pudo enviar la imagen");
+                                }))
+                .addOnFailureListener(e -> {
+                    Log.e(TAG, "Error al subir la imagen", e);
+                    callback.onError("No se pudo subir la imagen");
+                });
+    }
+
+    private void addMessage(String chatId, Message message, String errorMessage,
+                            Callback<Void> callback) {
         messagesOf(chatId).add(message)
                 .addOnSuccessListener(ref -> callback.onSuccess(null))
                 .addOnFailureListener(e -> {
-                    Log.e(TAG, "Error al enviar mensaje", e);
-                    callback.onError("No se pudo enviar el mensaje");
+                    Log.e(TAG, "Error al guardar el mensaje", e);
+                    callback.onError(errorMessage);
                 });
+    }
+
+    private String getSenderName(FirebaseUser user) {
+        String name = user.getDisplayName();
+        return (name == null || name.isEmpty()) ? "Usuario" : name;
     }
 
     public void stopListening() {
