@@ -14,10 +14,14 @@ import com.google.firebase.storage.StorageMetadata;
 import com.google.firebase.storage.StorageReference;
 import com.pucmm.chat.model.Message;
 import com.pucmm.chat.util.Callback;
+import com.pucmm.chat.model.ChatSummary;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class ChatRepository {
 
@@ -30,6 +34,7 @@ public class ChatRepository {
     private final FirebaseFirestore db = FirebaseFirestore.getInstance();
     private final FirebaseStorage storage = FirebaseStorage.getInstance();
     private ListenerRegistration registration;
+    private ListenerRegistration summariesRegistration;
 
     public String getCurrentUserId() {
         FirebaseUser user = auth.getCurrentUser();
@@ -129,6 +134,56 @@ public class ChatRepository {
     private String getSenderName(FirebaseUser user) {
         String name = user.getDisplayName();
         return (name == null || name.isEmpty()) ? "Usuario" : name;
+    }
+
+    public void listenChatSummaries(Callback<Map<String, ChatSummary>> callback) {
+        String myUid = getCurrentUserId();
+        if (myUid == null) {
+            callback.onError("No hay una sesión activa");
+            return;
+        }
+
+        stopListeningSummaries();
+        summariesRegistration = db.collection(CHATS_COLLECTION)
+                .whereArrayContains("participants", myUid)
+                .addSnapshotListener((snapshots, e) -> {
+                    if (e != null || snapshots == null) {
+                        Log.e(TAG, "Error al escuchar los resúmenes de chats", e);
+                        callback.onError("No se pudieron cargar los chats");
+                        return;
+                    }
+
+                    Map<String, ChatSummary> result = new HashMap<>();
+                    for (DocumentSnapshot doc : snapshots.getDocuments()) {
+                        ChatSummary summary = doc.toObject(ChatSummary.class);
+                        if (summary == null || summary.getParticipants() == null) {
+                            continue;
+                        }
+                        for (String uid : summary.getParticipants()) {
+                            if (!uid.equals(myUid)) {
+                                result.put(uid, summary);
+                            }
+                        }
+                    }
+                    callback.onSuccess(result);
+                });
+    }
+
+    public void stopListeningSummaries() {
+        if (summariesRegistration != null) {
+            summariesRegistration.remove();
+            summariesRegistration = null;
+        }
+    }
+
+    public void markChatAsRead(String chatId) {
+        String myUid = getCurrentUserId();
+        if (myUid == null) {
+            return;
+        }
+        db.collection(CHATS_COLLECTION).document(chatId)
+                .update("unread." + myUid, 0)
+                .addOnFailureListener(e -> Log.d(TAG, "No se pudo marcar como leído", e));
     }
 
     public void stopListening() {

@@ -47,6 +47,7 @@ public class ChatActivity extends AppCompatActivity {
     protected void onStop() {
         super.onStop();
         currentChatUserId = null;
+        viewModel.markAsRead();
     }
 
     @Override
@@ -102,6 +103,7 @@ public class ChatActivity extends AppCompatActivity {
             binding.tvEmpty.setVisibility(messages.isEmpty() ? View.VISIBLE : View.GONE);
             if (!messages.isEmpty()) {
                 binding.rvMessages.scrollToPosition(messages.size() - 1);
+                viewModel.markAsRead();
             }
         });
 

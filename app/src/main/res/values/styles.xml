@@ -77,9 +77,15 @@
         <item name="cornerSize">@dimen/radius_m</item>
     </style>
 
+    <style name="TextAppearance.Chat.Small" parent="TextAppearance.Material3.BodyMedium">
+        <item name="android:textSize">@dimen/text_small</item>
+        <item name="android:textColor">@color/on_surface_variant</item>
+    </style>
+
     <string name="login_subtitle">Inicia sesión para continuar</string>
     <string name="register_subtitle">Crea tu cuenta para empezar a chatear</string>
     <string name="hint_search">Buscar usuario</string>
     <string name="no_results">No se encontraron usuarios</string>
+
 
 </resources>

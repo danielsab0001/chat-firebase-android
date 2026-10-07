@@ -33,4 +33,6 @@
     <dimen name="bubble_padding">12dp</dimen>
     <dimen name="text_toolbar">20sp</dimen>
     <dimen name="text_avatar">18sp</dimen>
+    <dimen name="badge_size">22dp</dimen>
+    <dimen name="text_small">14sp</dimen>
 </resources>

@@ -11,11 +11,14 @@
     <string name="btn_go_register">¿No tienes cuenta? Regístrate</string>
     <string name="btn_go_login">Ya tengo cuenta</string>
     <string name="btn_logout">Cerrar sesión</string>
-    <string name="users_title">Usuarios</string>
+    <string name="chats_title">Chats</string>
     <string name="empty_users">Aún no hay otros usuarios registrados</string>
     <string name="hint_message">Escribe un mensaje</string>
     <string name="btn_send">Enviar</string>
     <string name="empty_chat">Aún no hay mensajes. ¡Escribe el primero!</string>
     <string name="btn_attach">Foto</string>
     <string name="notification_channel_name">Mensajes</string>
+    <string name="last_message_mine">Tú: %1$s</string>
+    <string name="yesterday">Ayer</string>
+    <string name="unread_overflow">99+</string>
 </resources>

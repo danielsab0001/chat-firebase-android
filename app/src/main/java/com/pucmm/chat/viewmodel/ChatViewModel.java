@@ -110,6 +110,14 @@ public class ChatViewModel extends AndroidViewModel {
         });
     }
 
+    public void markAsRead() {
+        List<Message> current = messages.getValue();
+        if (chatId == null || current == null || current.isEmpty()) {
+            return;
+        }
+        repository.markChatAsRead(chatId);
+    }
+
     @Override
     protected void onCleared() {
         super.onCleared();

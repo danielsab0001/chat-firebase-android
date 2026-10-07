@@ -2,7 +2,7 @@ const {setGlobalOptions} = require("firebase-functions/v2");
 const {onDocumentCreated} = require("firebase-functions/v2/firestore");
 const {logger} = require("firebase-functions");
 const {initializeApp} = require("firebase-admin/app");
-const {getFirestore} = require("firebase-admin/firestore");
+const {getFirestore, FieldValue} = require("firebase-admin/firestore");
 const {getMessaging} = require("firebase-admin/messaging");
 
 initializeApp();
@@ -17,8 +17,24 @@ exports.sendMessageNotification = onDocumentCreated(
 
       const [uidA, uidB] = chatId.split("_");
       const recipientId = message.senderId === uidA ? uidB : uidA;
+      const preview = message.imageUrl ? "Foto" : message.text;
 
       const db = getFirestore();
+
+      // 1. Resumen del chat para la lista de conversaciones
+      try {
+        await db.collection("chats").doc(chatId).set({
+          participants: [uidA, uidB],
+          lastMessage: preview.substring(0, 100),
+          lastMessageTime: message.timestamp || FieldValue.serverTimestamp(),
+          lastSenderId: message.senderId,
+          unread: {[recipientId]: FieldValue.increment(1)},
+        }, {merge: true});
+      } catch (error) {
+        logger.error("Error al actualizar el resumen del chat", error);
+      }
+
+      // 2. Notificación push al destinatario
       const tokenRef = db.collection("fcmTokens").doc(recipientId);
       const tokenDoc = await tokenRef.get();
       if (!tokenDoc.exists) {
