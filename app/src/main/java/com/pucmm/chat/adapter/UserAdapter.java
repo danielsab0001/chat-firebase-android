@@ -42,6 +42,9 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
     @Override
     public void onBindViewHolder(@NonNull UserViewHolder holder, int position) {
         User user = users.get(position);
+        String name = user.getName();
+        holder.binding.tvAvatar.setText(
+                name == null || name.isEmpty() ? "?" : String.valueOf(Character.toUpperCase(name.charAt(0))));
         holder.binding.tvUserName.setText(user.getName());
         holder.binding.tvUserEmail.setText(user.getEmail());
         holder.itemView.setOnClickListener(v -> listener.onUserClick(user));

@@ -17,12 +17,16 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import android.text.Editable;
+import android.text.TextWatcher;
+
 import com.pucmm.chat.R;
 import com.pucmm.chat.adapter.UserAdapter;
 import com.pucmm.chat.databinding.ActivityMainBinding;
 import com.pucmm.chat.model.User;
 import com.pucmm.chat.viewmodel.AuthViewModel;
 import com.pucmm.chat.viewmodel.UsersViewModel;
+
 
 public class MainActivity extends AppCompatActivity {
 
@@ -44,6 +48,7 @@ public class MainActivity extends AppCompatActivity {
 
         setupToolbar();
         setupRecyclerView();
+        setupSearch();
         observeViewModel();
         setupNotifications();
     }
@@ -78,6 +83,9 @@ public class MainActivity extends AppCompatActivity {
     private void observeViewModel() {
         usersViewModel.getUsers().observe(this, users -> {
             adapter.setUsers(users);
+
+            boolean searching = binding.etSearch.getText().length() > 0;
+            binding.tvEmpty.setText(searching ? R.string.no_results : R.string.empty_users);
             binding.tvEmpty.setVisibility(users.isEmpty() ? View.VISIBLE : View.GONE);
         });
 
@@ -92,6 +100,21 @@ public class MainActivity extends AppCompatActivity {
                 Intent intent = new Intent(this, LoginActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 startActivity(intent);
+            }
+        });
+    }
+
+    private void setupSearch() {
+        binding.etSearch.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) { }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                usersViewModel.search(s.toString());
             }
         });
     }

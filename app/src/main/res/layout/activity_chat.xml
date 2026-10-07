@@ -2,23 +2,28 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/surface">
 
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/toolbar"
+        style="@style/Widget.Chat.Toolbar"
         android:layout_width="0dp"
         android:layout_height="?attr/actionBarSize"
-        android:elevation="4dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:navigationIcon="?attr/homeAsUpIndicator" />
+        app:navigationIcon="@drawable/ic_arrow_back" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvMessages"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@id/etMessage"
+        android:background="@color/background"
+        android:clipToPadding="false"
+        android:paddingTop="@dimen/space_s"
+        android:paddingBottom="@dimen/space_s"
+        app:layout_constraintBottom_toTopOf="@id/inputBar"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/toolbar" />
@@ -28,8 +33,10 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:padding="24dp"
+        android:padding="@dimen/space_l"
         android:text="@string/empty_chat"
+        android:textAppearance="@style/TextAppearance.Chat.Body"
+        android:textColor="@color/on_surface_variant"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="@id/rvMessages"
         app:layout_constraintEnd_toEndOf="parent"
@@ -46,37 +53,50 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/toolbar" />
 
-    <Button
-        android:id="@+id/btnAttach"
-        style="?attr/borderlessButtonStyle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="4dp"
-        android:text="@string/btn_attach"
-        app:layout_constraintBottom_toBottomOf="@id/etMessage"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/etMessage" />
-
-    <EditText
-        android:id="@+id/etMessage"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/inputBar"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_margin="8dp"
-        android:hint="@string/hint_message"
-        android:importantForAutofill="no"
-        android:inputType="textMultiLine|textCapSentences"
-        android:maxLines="4"
+        android:background="@color/surface"
+        android:padding="@dimen/space_s"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/btnSend"
-        app:layout_constraintStart_toEndOf="@id/btnAttach" />
-
-    <Button
-        android:id="@+id/btnSend"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:text="@string/btn_send"
-        app:layout_constraintBottom_toBottomOf="@id/etMessage"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@id/etMessage" />
+        app:layout_constraintStart_toStartOf="parent">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnAttach"
+            style="@style/Widget.Material3.Button.IconButton"
+            android:layout_width="@dimen/icon_button_size"
+            android:layout_height="@dimen/icon_button_size"
+            android:contentDescription="@string/btn_attach"
+            app:icon="@drawable/ic_image"
+            app:iconTint="@color/primary"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <EditText
+            android:id="@+id/etMessage"
+            style="@style/Widget.Chat.RoundedInput"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/space_xs"
+            android:layout_marginEnd="@dimen/space_xs"
+            android:hint="@string/hint_message"
+            android:importantForAutofill="no"
+            android:inputType="textMultiLine|textCapSentences"
+            android:maxLines="4"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/btnSend"
+            app:layout_constraintStart_toEndOf="@id/btnAttach" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnSend"
+            style="@style/Widget.Material3.Button.IconButton.Filled"
+            android:layout_width="@dimen/icon_button_size"
+            android:layout_height="@dimen/icon_button_size"
+            android:contentDescription="@string/btn_send"
+            app:icon="@drawable/ic_send"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
