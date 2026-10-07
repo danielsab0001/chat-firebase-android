@@ -2,10 +2,6 @@ package com.pucmm.chat.util;
 
 import android.util.Patterns;
 
-/**
- * Validaciones de formularios. Cada método devuelve null si el valor es válido,
- * o el mensaje de error que se mostrará al usuario si no lo es.
- */
 public class Validators {
 
     private static final int MIN_PASSWORD_LENGTH = 6;

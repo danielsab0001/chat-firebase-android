@@ -127,6 +127,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void logout() {
+        usersViewModel.stopListening();
         authViewModel.logout();
     }
 }

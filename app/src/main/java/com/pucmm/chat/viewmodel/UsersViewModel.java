@@ -120,10 +120,14 @@ public class UsersViewModel extends ViewModel {
         userRepository.saveCurrentFcmToken();
     }
 
+    public void stopListening() {
+        userRepository.stopListening();
+        chatRepository.stopListeningSummaries();
+    }
+
     @Override
     protected void onCleared() {
         super.onCleared();
-        userRepository.stopListening();
-        chatRepository.stopListeningSummaries();
+        stopListening();
     }
 }

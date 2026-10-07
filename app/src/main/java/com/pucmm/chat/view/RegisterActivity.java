@@ -30,7 +30,6 @@ public class RegisterActivity extends AppCompatActivity {
                 binding.etPassword.getText().toString(),
                 binding.etConfirmPassword.getText().toString()));
 
-        // Vuelve a la pantalla de login que quedó debajo en la pila
         binding.btnGoLogin.setOnClickListener(v -> finish());
     }
 
